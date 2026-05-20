@@ -22,7 +22,7 @@ spec:
       emailConfigs:
         - to: 'up202107100@g.uporto.pt'
           from: 'lisamonitoringdashboard@gmail.com'
-          smarthost: 'smtp.example.com:587' # TODO: substituir por correto
+          smarthost: 'smtp.gmail.com:587'
           authUsername: 'lisamonitoringdashboard@gmail.com'
           authPassword:
             secret:
@@ -48,7 +48,7 @@ spec:
       emailConfigs:
         - to: 'up202107100@g.uporto.pt'
           from: 'lisamonitoringdashboard@gmail.com'
-          smarthost: 'smtp.example.com:587' # TODO: substituir por correto
+          smarthost: 'smtp.gmail.com:587'
           authUsername: 'lisamonitoringdashboard@gmail.com'
           authPassword:
             secret:
