@@ -99,6 +99,12 @@ The system includes a comprehensive monitoring stack for observability:
   - Supports log querying and filtering
   - Efficient log storage and retrieval
 
+### Alerting
+
+- **AlertManager**: Allows alerting the responsible engineer of a fail in the system
+  - Part of the Prometheus software
+  - Use of automated system to alert in case of failure 
+
 ### Monitoring Access
 
 - **Grafana**: http://localhost:3000 (admin/admin) - Main monitoring interface
