@@ -1,0 +1,41 @@
+name: Deploy AlertManager
+
+on:
+  push:
+    branches: [monitoring]
+    paths:
+      - 'infrastructure/alertmanager/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Instalar kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Configurar kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > $HOME/.kube/config
+
+      - name: Criar Secret SMTP (a partir de GitHub Secrets)
+        run: |
+          kubectl create secret generic alertmanager-smtp-secret \
+            --from-literal=password="${{ secrets.SMTP_PASSWORD }}" \
+            --namespace=scientific-workflow \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Aplicar configuração do AlertManager
+        run: |
+          kubectl apply -f infrastructure/alertmanager/alertmanager-deployment.yaml
+          kubectl apply -f infrastructure/alertmanager/alertmanager-config.yaml
+          kubectl apply -f infrastructure/alertmanager/alertmanager-rules.yaml
+
+      - name: Verificar estado do AlertManager
+        run: |
+          kubectl rollout status statefulset/alertmanager-alertmanager \
+            -n scientific-workflow --timeout=60s
