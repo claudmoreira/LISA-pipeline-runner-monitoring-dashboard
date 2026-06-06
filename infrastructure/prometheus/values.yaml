@@ -76,6 +76,12 @@ prometheus:
           values:
             - kube-system
             - scientific-workflow
+    # Carregar PrometheusRules customizadas
+    ruleSelector: {}
+    ruleSelectorNilUsesHelmValues: false
+    ruleNamespaceSelector:
+      matchLabels:
+        prometheus-rules: "enabled"
 
     additionalScrapeConfigs:
       - job_name: 'argo-workflow-controller'
