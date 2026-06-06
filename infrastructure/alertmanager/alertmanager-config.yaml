@@ -25,13 +25,6 @@ spec:
         receiver: 'email-alerts-warning'
         repeatInterval: 2h  # warning: reenvia menos frequentemente
 
-      # Rota para alertas informativos
-      - matchers:
-          - name: severity
-            value: info
-        receiver: 'email-alerts-info'
-        repeatInterval: 8h  # info: reenvia com menor frequência
-
   receivers:
     - name: 'email-alerts'
       emailConfigs:
@@ -108,26 +101,3 @@ spec:
             <b>Início:</b> {{ .StartsAt }}<br>
             {{ end }}
 
-    - name: 'email-alerts-info'
-      emailConfigs:
-        - to: 'up202107100@g.uporto.pt'
-          from: 'lisamonitoringdashboard@gmail.com'
-          smarthost: 'smtp.gmail.com:587'
-          authUsername: 'lisamonitoringdashboard@gmail.com'
-          authPassword:
-            secret:
-              name: alertmanager-smtp-secret
-              key: password
-          requireTLS: true
-          sendResolved: true
-          headers:
-            Subject: '[LISA] ℹ️ INFO - {{ .CommonLabels.alertname }}'
-          html: |
-            <h2 style="color:blue;">ℹ️ INFORMAÇÃO - LISA Pipeline Runner</h2>
-            {{ range .Alerts }}
-            <hr>
-            <b>Alerta:</b> {{ .Labels.alertname }}<br>
-            <b>Pod:</b> {{ .Labels.pod }}<br>
-            <b>Descrição:</b> {{ .Annotations.description }}<br>
-            <b>Início:</b> {{ .StartsAt }}<br>
-            {{ end }}
