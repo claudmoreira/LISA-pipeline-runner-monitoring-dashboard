@@ -102,19 +102,3 @@ spec:
             summary: "Workflow terminou com erro"
             description: "O workflow no pod {{ $labels.pod }} terminou com erro."
             runbook_url: "https://example.com/docs/workflow-failed"
-
-        # ========================================
-        # INFO ALERTS
-        # ========================================
-
-        # Alert when workflow completes successfully
-        - alert: WorkflowSucceeded
-          expr: increase(kube_pod_container_status_terminated_reason{reason="Completed", container="main", namespace="scientific-workflow"}[5m]) > 0
-          for: 1m
-          labels:
-            severity: info
-            workflow_status: "succeeded"
-          annotations:
-            summary: "Workflow completado com sucesso"
-            description: "O workflow no pod {{ $labels.pod }} foi completado com sucesso."
-            runbook_url: "https://example.com/docs/workflow-succeeded"
