@@ -1,0 +1,120 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: lisa-workflow-alerts
+  namespace: scientific-workflow
+spec:
+  groups:
+    - name: lisa.workflow.alerts
+      interval: 30s
+      rules:
+        # ========================================
+        # CRITICAL ALERTS
+        # ========================================
+
+        # Alert when system/critical service is down
+        - alert: SystemDown
+          expr: up{job=~"argo-workflow-controller|backend|prometheus"} == 0
+          for: 2m
+          labels:
+            severity: critical
+            service: "{{ $labels.job }}"
+          annotations:
+            summary: "Sistema crítico está em baixo: {{ $labels.job }}"
+            description: "O serviço {{ $labels.job }} está indisponível há mais de 2 minutos."
+            runbook_url: "https://example.com/docs/system-down"
+
+        # Alert when workflow terminates with OOMKilled
+        - alert: WorkflowOOMKilled
+          expr: increase(kube_pod_container_status_terminated_reason{reason="OOMKilled", container="main", namespace="scientific-workflow"}[5m]) > 0
+          for: 1m
+          labels:
+            severity: critical
+            workflow_status: "oom_killed"
+          annotations:
+            summary: "Workflow terminado por falta de memória (OOMKilled)"
+            description: "O workflow no pod {{ $labels.pod }} foi terminado devido a falta de memória (OOMKilled)."
+            runbook_url: "https://example.com/docs/workflow-oomkilled"
+
+        # ========================================
+        # WARNING ALERTS
+        # ========================================
+
+        # Alert when CPU usage is above 95%
+        - alert: HighCPUUsage
+          expr: |
+            (
+              100 * rate(container_cpu_usage_seconds_total{
+                container="main",
+                namespace="scientific-workflow",
+                pod=~"lisa-workflow-.*"
+              }[2m])
+            ) / on(pod, namespace)
+            kube_pod_container_resource_limits{
+              container="main",
+              resource="cpu",
+              namespace="scientific-workflow",
+              pod=~"lisa-workflow-.*"
+            } >= 0.95
+          for: 5m
+          labels:
+            severity: warning
+            resource: "cpu"
+          annotations:
+            summary: "CPU acima de 95% no workflow {{ $labels.pod }}"
+            description: "O pod {{ $labels.pod }} está usando {{ printf \"%.2f\" $value }}% do limite de CPU."
+            runbook_url: "https://example.com/docs/high-cpu"
+
+        # Alert when Memory usage is above 95%
+        - alert: HighMemoryUsage
+          expr: |
+            (
+              100 * container_memory_usage_bytes{
+                container="main",
+                namespace="scientific-workflow",
+                pod=~"lisa-workflow-.*"
+              }
+            ) / on(pod, namespace)
+            kube_pod_container_resource_limits{
+              container="main",
+              resource="memory",
+              unit="byte",
+              namespace="scientific-workflow",
+              pod=~"lisa-workflow-.*"
+            } >= 0.95
+          for: 5m
+          labels:
+            severity: warning
+            resource: "memory"
+          annotations:
+            summary: "Memória acima de 95% no workflow {{ $labels.pod }}"
+            description: "O pod {{ $labels.pod }} está usando {{ printf \"%.2f\" $value }}% do limite de memória."
+            runbook_url: "https://example.com/docs/high-memory"
+
+        # Alert when workflow terminates with Error
+        - alert: WorkflowFailed
+          expr: increase(kube_pod_container_status_terminated_reason{reason="Error", container="main", namespace="scientific-workflow"}[5m]) > 0
+          for: 1m
+          labels:
+            severity: warning
+            workflow_status: "failed"
+          annotations:
+            summary: "Workflow terminou com erro"
+            description: "O workflow no pod {{ $labels.pod }} terminou com erro."
+            runbook_url: "https://example.com/docs/workflow-failed"
+
+        # ========================================
+        # INFO ALERTS
+        # ========================================
+
+        # Alert when workflow completes successfully
+        - alert: WorkflowSucceeded
+          expr: increase(kube_pod_container_status_terminated_reason{reason="Completed", container="main", namespace="scientific-workflow"}[5m]) > 0
+          for: 1m
+          labels:
+            severity: info
+            workflow_status: "succeeded"
+          annotations:
+            summary: "Workflow completado com sucesso"
+            description: "O workflow no pod {{ $labels.pod }} foi completado com sucesso."
+            runbook_url: "https://example.com/docs/workflow-succeeded"
