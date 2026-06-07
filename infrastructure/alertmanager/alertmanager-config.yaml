@@ -44,12 +44,12 @@ spec:
             <h2>LISA Pipeline Runner - {{ .Status | toUpper }}</h2>
             {{ range .Alerts }}
             <hr>
-            <b>Alerta:</b> {{ .Labels.alertname }}<br>
-            <b>Severidade:</b> {{ .Labels.severity }}<br>
+            <b>Alert:</b> {{ .Labels.alertname }}<br>
+            <b>Severity:</b> {{ .Labels.severity }}<br>
             <b>Namespace:</b> {{ .Labels.namespace }}<br>
             <b>Pod:</b> {{ .Labels.pod }}<br>
-            <b>Descrição:</b> {{ .Annotations.description }}<br>
-            <b>Início:</b> {{ .StartsAt }}<br>
+            <b>Description:</b> {{ .Annotations.description }}<br>
+            <b>Start Time:</b> {{ .StartsAt }}<br>
             {{ end }}
 
     - name: 'email-alerts-critical'
@@ -67,13 +67,13 @@ spec:
           headers:
             Subject: '[LISA] 🔴 CRITICAL - {{ .CommonLabels.alertname }}'
           html: |
-            <h2 style="color:red;">⚠️ ALERTA CRÍTICO - LISA Pipeline Runner</h2>
+            <h2 style="color:red;">⚠️ CRITICAL ALERT - LISA Pipeline Runner</h2>
             {{ range .Alerts }}
             <hr>
-            <b>Alerta:</b> {{ .Labels.alertname }}<br>
+            <b>Alert:</b> {{ .Labels.alertname }}<br>
             <b>Pod:</b> {{ .Labels.pod }}<br>
-            <b>Descrição:</b> {{ .Annotations.description }}<br>
-            <b>Início:</b> {{ .StartsAt }}<br>
+            <b>Description:</b> {{ .Annotations.description }}<br>
+            <b>Start Time:</b> {{ .StartsAt }}<br>
             {{ end }}
 
     - name: 'email-alerts-warning'
@@ -91,13 +91,13 @@ spec:
           headers:
             Subject: '[LISA] ⚠️ WARNING - {{ .CommonLabels.alertname }}'
           html: |
-            <h2 style="color:orange;">⚠️ ALERTA DE AVISO - LISA Pipeline Runner</h2>
+            <h2 style="color:orange;">⚠️ WARNING ALERT - LISA Pipeline Runner</h2>
             {{ range .Alerts }}
             <hr>
-            <b>Alerta:</b> {{ .Labels.alertname }}<br>
-            <b>Severidade:</b> {{ .Labels.severity }}<br>
+            <b>Alert:</b> {{ .Labels.alertname }}<br>
+            <b>Severity:</b> {{ .Labels.severity }}<br>
             <b>Pod:</b> {{ .Labels.pod }}<br>
-            <b>Descrição:</b> {{ .Annotations.description }}<br>
-            <b>Início:</b> {{ .StartsAt }}<br>
+            <b>Description:</b> {{ .Annotations.description }}<br>
+            <b>Start Time:</b> {{ .StartsAt }}<br>
             {{ end }}
 
