@@ -20,9 +20,8 @@ spec:
             severity: critical
             service: "{{ $labels.job }}"
           annotations:
-            summary: "Sistema crítico está em baixo: {{ $labels.job }}"
-            description: "O serviço {{ $labels.job }} está indisponível há mais de 2 minutos."
-            runbook_url: "https://example.com/docs/system-down"
+            summary: "System critical is down: {{ $labels.job }}"
+            description: "The service {{ $labels.job }} is unavailable for more than 2 minutes."
 
         # Alert when workflow terminates with OOMKilled
         - alert: WorkflowOOMKilled
@@ -32,9 +31,8 @@ spec:
             severity: critical
             workflow_status: "oom_killed"
           annotations:
-            summary: "Workflow terminado por falta de memória (OOMKilled)"
-            description: "O workflow no pod {{ $labels.pod }} foi terminado devido a falta de memória (OOMKilled)."
-            runbook_url: "https://example.com/docs/workflow-oomkilled"
+            summary: "Workflow ended due to memory exhaustion (OOMKilled)"
+            description: "The workflow in pod {{ $labels.pod }} was terminated due to memory exhaustion (OOMKilled)."
 
         # ========================================
         # WARNING ALERTS
@@ -61,9 +59,8 @@ spec:
             severity: warning
             resource: "cpu"
           annotations:
-            summary: "CPU acima de 95% no workflow {{ $labels.pod }}"
-            description: "O pod {{ $labels.pod }} está usando {{ printf \"%.2f\" $value }}% do limite de CPU."
-            runbook_url: "https://example.com/docs/high-cpu"
+            summary: "CPU above 95% in workflow {{ $labels.pod }}"
+            description: "The pod {{ $labels.pod }} is using {{ printf \"%.2f\" $value }}% of its CPU limit."
 
         # Alert when Memory usage is above 95%
         - alert: HighMemoryUsage
@@ -87,9 +84,8 @@ spec:
             severity: warning
             resource: "memory"
           annotations:
-            summary: "Memória acima de 95% no workflow {{ $labels.pod }}"
-            description: "O pod {{ $labels.pod }} está usando {{ printf \"%.2f\" $value }}% do limite de memória."
-            runbook_url: "https://example.com/docs/high-memory"
+            summary: "Memory above 95% in workflow {{ $labels.pod }}"
+            description: "The pod {{ $labels.pod }} is using {{ printf \"%.2f\" $value }}% of its memory limit."
 
         # Alert when workflow terminates with Error
         - alert: WorkflowFailed
@@ -99,6 +95,5 @@ spec:
             severity: warning
             workflow_status: "failed"
           annotations:
-            summary: "Workflow terminou com erro"
-            description: "O workflow no pod {{ $labels.pod }} terminou com erro."
-            runbook_url: "https://example.com/docs/workflow-failed"
+            summary: "Workflow failed"
+            description: "The workflow in pod {{ $labels.pod }} failed."
